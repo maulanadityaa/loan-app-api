@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class LoanTypeRequest {
     private String id;
     private String loanType;
-    private Long maxLoan;
+    private Double maxLoan;
 }

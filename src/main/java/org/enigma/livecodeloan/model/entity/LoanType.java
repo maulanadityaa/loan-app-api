@@ -24,7 +24,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @Entity
 @Data
-@Table(name = "t_load_type")
+@Table(name = "t_loan_type")
 public class LoanType {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
