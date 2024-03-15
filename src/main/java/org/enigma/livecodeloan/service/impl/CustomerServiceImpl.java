@@ -41,8 +41,16 @@ public class CustomerServiceImpl implements CustomerService {
 
         try {
             if (customer != null) {
-                customer.setId(customerRequest.getId());
-                customer = toCustomer(customerRequest);
+                customer = Customer.builder()
+                        .id(customer.getId())
+                        .firstName(customerRequest.getFirstName())
+                        .lastName(customerRequest.getLastName())
+                        .dob(stringToDate(customerRequest.getDateOfBirth()))
+                        .mobilePhone(customerRequest.getPhone())
+                        .marriageStatus(customerRequest.getMarriageStatus())
+                        .status(EStatus.ACTIVE)
+                        .user(customer.getUser())
+                        .build();
 
                 customerRepository.save(customer);
                 return toCustomerResponse(customer);
@@ -127,6 +135,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .lastName(customer.getLastName())
                 .dateOfBirth(dateToString(customer.getDob()))
                 .marriageStatus(customer.getMarriageStatus())
+                .phone(customer.getMobilePhone())
                 .build();
     }
 }

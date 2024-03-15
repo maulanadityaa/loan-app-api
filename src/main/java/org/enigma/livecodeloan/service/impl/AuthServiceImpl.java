@@ -45,7 +45,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public SignUpResponse register(AuthRequest authRequest) {
         try {
-
             List<UserRole> userRoles = new ArrayList<>();
             for (ERole eRole : authRequest.getRoles()) {
                 Role role = roleService.getOrSave(eRole);

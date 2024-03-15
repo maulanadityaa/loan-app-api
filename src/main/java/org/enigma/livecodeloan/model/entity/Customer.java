@@ -45,7 +45,7 @@ public class Customer {
     @Column(name = "phone", nullable = false, unique = true, length = 50)
     private String mobilePhone;
 
-    @Column(name = "marriage_status", nullable = false, unique = true, length = 50)
+    @Column(name = "marriage_status")
     private String marriageStatus;
 
     @Enumerated(EnumType.STRING)
