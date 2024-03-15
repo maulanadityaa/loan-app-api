@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.enigma.livecodeloan.model.entity.UserCredential;
 
 @Data
 @Builder(toBuilder = true)
@@ -14,7 +15,7 @@ public class CustomerRequest {
     private String firstName;
     private String lastName;
     private String dateOfBirth;
-    private String address;
     private String phone;
-    private String status;
+    private String marriageStatus;
+    private UserCredential userCredential;
 }

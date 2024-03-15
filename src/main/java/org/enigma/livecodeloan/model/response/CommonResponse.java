@@ -9,11 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerResponse {
-    private String id;
-    private String firstName;
-    private String lastName;
-    private String dateOfBirth;
-    private String phone;
-    private String marriageStatus;
+public class CommonResponse<T> {
+    private Integer statusCode;
+    private String message;
+    private T data;
 }

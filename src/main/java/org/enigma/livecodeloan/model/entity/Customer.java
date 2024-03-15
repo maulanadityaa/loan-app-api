@@ -42,11 +42,11 @@ public class Customer {
     @Column(name = "date_of_birth")
     private Date dob;
 
-    @Column(name = "address", nullable = false, length = 50)
-    private String address;
-
     @Column(name = "phone", nullable = false, unique = true, length = 50)
     private String mobilePhone;
+
+    @Column(name = "marriage_status", nullable = false, unique = true, length = 50)
+    private String marriageStatus;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

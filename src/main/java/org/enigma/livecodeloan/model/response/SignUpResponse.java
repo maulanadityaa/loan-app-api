@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.enigma.livecodeloan.constant.ERole;
+
+import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
@@ -11,5 +14,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignUpResponse {
     private String email;
-    private String role;
+    private List<ERole> role;
 }
