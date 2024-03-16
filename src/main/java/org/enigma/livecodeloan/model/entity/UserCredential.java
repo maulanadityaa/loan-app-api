@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.enigma.livecodeloan.constant.DbPath;
 import org.hibernate.annotations.Cascade;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Entity
-@Table(name = "mst_user")
+@Table(name = DbPath.USER_SCHEMA)
 public class UserCredential {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

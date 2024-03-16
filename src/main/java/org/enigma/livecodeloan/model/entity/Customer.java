@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.enigma.livecodeloan.constant.DbPath;
 import org.enigma.livecodeloan.constant.EStatus;
 
 import java.util.Date;
@@ -27,7 +28,7 @@ import java.util.Date;
 @Builder(toBuilder = true)
 @Entity
 @Data
-@Table(name = "mst_customer")
+@Table(name = DbPath.CUSTOMER_SCHEMA)
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

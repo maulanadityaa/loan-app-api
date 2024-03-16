@@ -1,6 +1,7 @@
 package org.enigma.livecodeloan.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.enigma.livecodeloan.constant.AppPath;
 import org.enigma.livecodeloan.model.request.AuthRequest;
 import org.enigma.livecodeloan.model.response.CommonResponse;
 import org.enigma.livecodeloan.model.response.SignInResponse;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(AppPath.AUTH)
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;

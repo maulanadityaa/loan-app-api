@@ -1,6 +1,7 @@
 package org.enigma.livecodeloan.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.enigma.livecodeloan.constant.AppPath;
 import org.enigma.livecodeloan.model.request.InstalmentTypeRequest;
 import org.enigma.livecodeloan.model.response.CommonResponse;
 import org.enigma.livecodeloan.model.response.InstalmentTypeResponse;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/instalment-types")
+@RequestMapping(AppPath.INSTALMENT_TYPES)
 @RequiredArgsConstructor
 public class InstalmentTypeController {
     private final InstalmentTypeService instalmentTypeService;
@@ -50,7 +51,7 @@ public class InstalmentTypeController {
                         .build());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getInstalmentTypeById(@PathVariable String id) {
         InstalmentTypeResponse instalmentTypeResponse = instalmentTypeService.getById(id);
 
@@ -75,7 +76,7 @@ public class InstalmentTypeController {
                         .build());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(AppPath.DELETE_BY_ID)
     public ResponseEntity<?> deleteInstalmentType(@PathVariable String id) {
         instalmentTypeService.delete(id);
 

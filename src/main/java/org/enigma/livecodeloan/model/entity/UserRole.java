@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.enigma.livecodeloan.constant.DbPath;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Entity
-@Table(name = "t_user_role")
+@Table(name = DbPath.USER_ROLE_SCHEMA)
 public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

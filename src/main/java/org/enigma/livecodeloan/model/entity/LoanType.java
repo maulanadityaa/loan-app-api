@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.enigma.livecodeloan.constant.DbPath;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @Entity
 @Data
-@Table(name = "t_loan_type")
+@Table(name = DbPath.LOAN_TYPE_SCHEMA)
 public class LoanType {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

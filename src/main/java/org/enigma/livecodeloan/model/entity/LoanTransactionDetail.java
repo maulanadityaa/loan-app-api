@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.enigma.livecodeloan.constant.DbPath;
 import org.enigma.livecodeloan.constant.EApprovalStatus;
 import org.enigma.livecodeloan.constant.ELoanStatus;
 
@@ -28,7 +29,7 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 @Entity
 @Data
-@Table(name = "trx_loan_detail")
+@Table(name = DbPath.LOAN_TRANSACTION_DETAIL_SCHEMA)
 public class LoanTransactionDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

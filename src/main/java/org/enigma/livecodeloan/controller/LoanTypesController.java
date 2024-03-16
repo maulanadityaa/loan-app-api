@@ -1,6 +1,7 @@
 package org.enigma.livecodeloan.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.enigma.livecodeloan.constant.AppPath;
 import org.enigma.livecodeloan.model.request.LoanTypeRequest;
 import org.enigma.livecodeloan.model.response.CommonResponse;
 import org.enigma.livecodeloan.model.response.LoanTypeResponse;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/loan-types")
+@RequestMapping(AppPath.LOAN_TYPES)
 @RequiredArgsConstructor
 public class LoanTypesController {
     private final LoanTypeService loanTypeService;
@@ -63,7 +64,7 @@ public class LoanTypesController {
                         .build());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getLoanTypeById(@PathVariable String id) {
         LoanTypeResponse loanTypeResponse = loanTypeService.getLoanTypeById(id);
 
@@ -75,7 +76,7 @@ public class LoanTypesController {
                         .build());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(AppPath.DELETE_BY_ID)
     public ResponseEntity<?> deleteLoanType(@PathVariable String id) {
         loanTypeService.delete(id);
 

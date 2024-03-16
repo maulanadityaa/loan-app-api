@@ -1,6 +1,7 @@
 package org.enigma.livecodeloan.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.enigma.livecodeloan.constant.AppPath;
 import org.enigma.livecodeloan.model.response.CommonResponse;
 import org.enigma.livecodeloan.model.response.UserResponse;
 import org.enigma.livecodeloan.service.UserService;
@@ -12,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(AppPath.USERS)
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getUserById(@PathVariable String id) {
         UserResponse userResponse = userService.getUserByUserId(id);
 

@@ -18,6 +18,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.enigma.livecodeloan.constant.DbPath;
 import org.enigma.livecodeloan.constant.EApprovalStatus;
 import org.enigma.livecodeloan.constant.EInstalmentType;
 import org.hibernate.annotations.Cascade;
@@ -31,7 +32,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @Entity
 @Data
-@Table(name = "trx_loan")
+@Table(name = DbPath.LOAN_TRANSACTION_SCHEMA)
 public class LoanTransaction {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

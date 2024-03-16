@@ -1,6 +1,7 @@
 package org.enigma.livecodeloan.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.enigma.livecodeloan.constant.AppPath;
 import org.enigma.livecodeloan.model.request.CustomerRequest;
 import org.enigma.livecodeloan.model.response.CommonResponse;
 import org.enigma.livecodeloan.model.response.CustomerResponse;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping(AppPath.CUSTOMERS)
 @RequiredArgsConstructor
 public class CustomerController {
     private final CustomerService customerService;
@@ -35,7 +36,7 @@ public class CustomerController {
                         .build());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getCustomerById(@PathVariable String id) {
         CustomerResponse customerResponse = customerService.getById(id);
 
@@ -59,7 +60,7 @@ public class CustomerController {
                         .build());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(AppPath.DELETE_BY_ID)
     public ResponseEntity<?> deleteCustomer(@PathVariable String id) {
         customerService.delete(id);
 

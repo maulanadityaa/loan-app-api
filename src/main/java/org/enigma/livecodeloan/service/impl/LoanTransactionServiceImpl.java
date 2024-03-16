@@ -13,6 +13,7 @@ import org.enigma.livecodeloan.model.entity.LoanType;
 import org.enigma.livecodeloan.model.exception.ApplicationException;
 import org.enigma.livecodeloan.model.request.LoanApproveRequest;
 import org.enigma.livecodeloan.model.request.LoanPayRequest;
+import org.enigma.livecodeloan.model.request.LoanRejectRequest;
 import org.enigma.livecodeloan.model.request.LoanRequest;
 import org.enigma.livecodeloan.model.response.CustomerResponse;
 import org.enigma.livecodeloan.model.response.InstalmentTypeResponse;
@@ -147,6 +148,24 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
         return toLoanResponse(loanTransaction, loanDetailResponses);
     }
 
+    @Override
+    public LoanResponse reject(LoanRejectRequest loanRejectRequest) {
+        LoanTransaction loanTransaction = loanTransactionRepository.findById(loanRejectRequest.getLoanTransactionId()).orElseThrow(() -> new ApplicationException("Loan Transaction not found", String.format("Cannot find loan transaction with id=%s", loanRejectRequest.getLoanTransactionId()), HttpStatus.NOT_FOUND));
+
+//        UserResponse userResponse = userService.getUserByUserId(adminId);
+
+//        loanTransaction.setApprovedAt(Instant.now().toEpochMilli());
+//        loanTransaction.setApprovedBy(userResponse.getEmail());
+        loanTransaction.setApprovalStatus(EApprovalStatus.REJECTED);
+        loanTransaction.setNominal(loanTransaction.getNominal());
+        loanTransaction.setUpdatedAt(Instant.now().toEpochMilli());
+
+        loanTransactionRepository.save(loanTransaction);
+
+        List<LoanDetailResponse> loanDetailResponses = getLoanDetailResponses(loanTransaction);
+
+        return toLoanResponse(loanTransaction, loanDetailResponses);
+    }
 
     @Override
     public List<LoanResponse> getAllLoans() {
@@ -174,21 +193,28 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
     public LoanResponse pay(String transactionId, LoanPayRequest loanPayRequest) {
         LoanTransaction loanTransaction = loanTransactionRepository.findById(transactionId).orElseThrow(() -> new ApplicationException("Loan Transaction not found", String.format("Cannot find loan transaction with id=%s", transactionId), HttpStatus.NOT_FOUND));
 
-        LoanTransactionDetail loanTransactionDetail = loanTransactionDetailService.getById(loanPayRequest.getLoanTransactionDetailId());
-        loanTransactionDetail = LoanTransactionDetail.builder()
-                .id(loanTransactionDetail.getId())
-                .transactionDate(loanTransactionDetail.getTransactionDate())
-                .nominal(loanTransactionDetail.getNominal())
-                .loanStatus(ELoanStatus.PAID)
-                .createdAt(loanTransactionDetail.getCreatedAt())
-                .updatedAt(Instant.now().toEpochMilli())
-                .loanTransaction(loanTransaction)
-                .build();
-        loanTransactionDetailService.create(loanTransactionDetail);
+        if (loanTransaction.getApprovalStatus() == EApprovalStatus.REJECTED) {
+            LoanTransactionDetail loanTransactionDetail = loanTransactionDetailService.getById(loanPayRequest.getLoanTransactionDetailId());
 
-        List<LoanDetailResponse> loanDetailResponses = getLoanDetailResponses(loanTransaction);
+            if (loanTransactionDetail.getLoanStatus() == ELoanStatus.PAID) {
+                loanTransactionDetail = LoanTransactionDetail.builder()
+                        .id(loanTransactionDetail.getId())
+                        .transactionDate(loanTransactionDetail.getTransactionDate())
+                        .nominal(loanTransactionDetail.getNominal())
+                        .loanStatus(ELoanStatus.PAID)
+                        .createdAt(loanTransactionDetail.getCreatedAt())
+                        .updatedAt(Instant.now().toEpochMilli())
+                        .loanTransaction(loanTransaction)
+                        .build();
+                loanTransactionDetailService.create(loanTransactionDetail);
 
-        return toLoanResponse(loanTransaction, loanDetailResponses);
+                List<LoanDetailResponse> loanDetailResponses = getLoanDetailResponses(loanTransaction);
+
+                return toLoanResponse(loanTransaction, loanDetailResponses);
+            }
+            throw new ApplicationException("Loan Transaction already paid", String.format("Cannot pay loan with status=%s", loanTransactionDetail.getLoanStatus().name()), HttpStatus.BAD_REQUEST);
+        }
+        throw new ApplicationException("Loan Transaction already rejected", String.format("Cannotloa pay loan with status=%s", loanTransaction.getApprovalStatus().name()), HttpStatus.BAD_REQUEST);
     }
 
     private static LoanResponse toLoanResponse(LoanTransaction loanTransaction, List<LoanDetailResponse> loanDetailResponses) {

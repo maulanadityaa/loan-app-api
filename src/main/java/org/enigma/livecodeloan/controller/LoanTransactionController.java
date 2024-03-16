@@ -1,8 +1,10 @@
 package org.enigma.livecodeloan.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.enigma.livecodeloan.constant.AppPath;
 import org.enigma.livecodeloan.model.request.LoanApproveRequest;
 import org.enigma.livecodeloan.model.request.LoanPayRequest;
+import org.enigma.livecodeloan.model.request.LoanRejectRequest;
 import org.enigma.livecodeloan.model.request.LoanRequest;
 import org.enigma.livecodeloan.model.response.CommonResponse;
 import org.enigma.livecodeloan.model.response.LoanResponse;
@@ -21,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/transactions")
+@RequestMapping(AppPath.LOAN_TRANSACTIONS)
 @RequiredArgsConstructor
 public class LoanTransactionController {
     private final LoanTransactionService loanTransactionService;
@@ -51,7 +53,7 @@ public class LoanTransactionController {
                         .build());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(AppPath.GET_BY_ID)
     public ResponseEntity<?> getLoanTransactionById(@PathVariable String id) {
         LoanResponse loanResponse = loanTransactionService.getLoanById(id);
 
@@ -64,7 +66,7 @@ public class LoanTransactionController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
-    @PutMapping("/{adminId}/approve")
+    @PutMapping(AppPath.APPROVE_LOAN)
     public ResponseEntity<?> approveLoanTransaction(@PathVariable String adminId, @RequestBody LoanApproveRequest loanApproveRequest) {
         LoanResponse loanResponse = loanTransactionService.approve(loanApproveRequest, adminId);
 
@@ -77,7 +79,20 @@ public class LoanTransactionController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
-    @PutMapping("/{trxId}/pay")
+    @PutMapping(AppPath.REJECT_LOAN)
+    public ResponseEntity<?> rejectLoanTransaction(@RequestBody LoanRejectRequest loanRejectRequest) {
+        LoanResponse loanResponse = loanTransactionService.reject(loanRejectRequest);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponse.<LoanResponse>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Loan transaction rejected")
+                        .data(loanResponse)
+                        .build());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
+    @PutMapping(AppPath.PAY_LOAN)
     public ResponseEntity<?> payLoanTransaction(@PathVariable String trxId, @RequestBody LoanPayRequest loanPayRequest) {
         LoanResponse loanResponse = loanTransactionService.pay(trxId, loanPayRequest);
 

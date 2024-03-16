@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.enigma.livecodeloan.constant.DbPath;
 import org.enigma.livecodeloan.constant.EInstalmentType;
 import org.enigma.livecodeloan.constant.ERole;
 
@@ -26,7 +27,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Entity
-@Table(name = "t_role")
+@Table(name = DbPath.ROLE_SCHEMA)
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
