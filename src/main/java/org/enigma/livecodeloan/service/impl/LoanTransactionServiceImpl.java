@@ -85,7 +85,7 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
                         .build();
                 loanTransactionRepository.save(loanTransaction);
             } else {
-                return null;
+                throw new ApplicationException("Loan nominal exceeded limit", String.format("Cannot create loan exceeded limit=%s", loanType.getMaxLoan()), HttpStatus.BAD_REQUEST);
             }
 
             return LoanResponse.builder()
@@ -98,7 +98,8 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
                     .build();
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new ApplicationException("Cannot fetch customer", String.format("Cannot parse date=%s", loanRequest.getCustomer().getId()), HttpStatus.BAD_REQUEST);
+
         }
     }
 
@@ -162,13 +163,10 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
 
     @Override
     public LoanResponse getLoanById(String id) {
-        LoanTransaction loanTransaction = loanTransactionRepository.findById(id).orElse(null);
-        if (loanTransaction != null) {
-            List<LoanDetailResponse> loanDetailResponses = getLoanDetailResponses(loanTransaction);
+        LoanTransaction loanTransaction = loanTransactionRepository.findById(id).orElseThrow(() -> new ApplicationException("Loan Transaction not found", String.format("Cannot find loan transaction with id=%s", id), HttpStatus.NOT_FOUND));
+        List<LoanDetailResponse> loanDetailResponses = getLoanDetailResponses(loanTransaction);
 
-            return toLoanResponse(loanTransaction, loanDetailResponses);
-        }
-        return null;
+        return toLoanResponse(loanTransaction, loanDetailResponses);
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -176,24 +174,21 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
     public LoanResponse pay(String transactionId, LoanPayRequest loanPayRequest) {
         LoanTransaction loanTransaction = loanTransactionRepository.findById(transactionId).orElseThrow(() -> new ApplicationException("Loan Transaction not found", String.format("Cannot find loan transaction with id=%s", transactionId), HttpStatus.NOT_FOUND));
 
-        if (loanTransaction != null) {
-            LoanTransactionDetail loanTransactionDetail = loanTransactionDetailService.getById(loanPayRequest.getLoanTransactionDetailId());
-            loanTransactionDetail = LoanTransactionDetail.builder()
-                    .id(loanTransactionDetail.getId())
-                    .transactionDate(loanTransactionDetail.getTransactionDate())
-                    .nominal(loanTransactionDetail.getNominal())
-                    .loanStatus(ELoanStatus.PAID)
-                    .createdAt(loanTransactionDetail.getCreatedAt())
-                    .updatedAt(Instant.now().toEpochMilli())
-                    .loanTransaction(loanTransaction)
-                    .build();
-            loanTransactionDetailService.create(loanTransactionDetail);
+        LoanTransactionDetail loanTransactionDetail = loanTransactionDetailService.getById(loanPayRequest.getLoanTransactionDetailId());
+        loanTransactionDetail = LoanTransactionDetail.builder()
+                .id(loanTransactionDetail.getId())
+                .transactionDate(loanTransactionDetail.getTransactionDate())
+                .nominal(loanTransactionDetail.getNominal())
+                .loanStatus(ELoanStatus.PAID)
+                .createdAt(loanTransactionDetail.getCreatedAt())
+                .updatedAt(Instant.now().toEpochMilli())
+                .loanTransaction(loanTransaction)
+                .build();
+        loanTransactionDetailService.create(loanTransactionDetail);
 
-            List<LoanDetailResponse> loanDetailResponses = getLoanDetailResponses(loanTransaction);
+        List<LoanDetailResponse> loanDetailResponses = getLoanDetailResponses(loanTransaction);
 
-            return toLoanResponse(loanTransaction, loanDetailResponses);
-        }
-        return null;
+        return toLoanResponse(loanTransaction, loanDetailResponses);
     }
 
     private static LoanResponse toLoanResponse(LoanTransaction loanTransaction, List<LoanDetailResponse> loanDetailResponses) {
