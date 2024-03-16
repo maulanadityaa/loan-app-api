@@ -113,7 +113,7 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
         loanTransaction.setApprovedAt(Instant.now().toEpochMilli());
         loanTransaction.setApprovedBy(userResponse.getEmail());
         loanTransaction.setApprovalStatus(EApprovalStatus.APPROVED);
-        loanTransaction.setNominal(((loanTransaction.getNominal() * loanApproveRequest.getInterestRates()) / 100) + loanTransaction.getNominal());
+        loanTransaction.setNominal(loanTransaction.getNominal());
 
         Integer counter = 0;
         switch (loanTransaction.getInstalmentType().getInstalmentType()) {
@@ -129,7 +129,7 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
         for (int i = 0; i < counter; i++) {
             loanTransactionDetails.add(LoanTransactionDetail.builder()
                     .transactionDate(Instant.now().toEpochMilli())
-                    .nominal(loanTransaction.getNominal() / counter)
+                    .nominal((((loanTransaction.getNominal() * loanApproveRequest.getInterestRates()) / 100) + loanTransaction.getNominal()) / counter)
                     .loanStatus(ELoanStatus.UNPAID)
                     .createdAt(Instant.now().toEpochMilli())
                     .updatedAt(Instant.now().toEpochMilli())

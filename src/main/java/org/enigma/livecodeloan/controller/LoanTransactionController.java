@@ -9,6 +9,7 @@ import org.enigma.livecodeloan.model.response.LoanResponse;
 import org.enigma.livecodeloan.service.LoanTransactionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,7 @@ import java.util.List;
 public class LoanTransactionController {
     private final LoanTransactionService loanTransactionService;
 
+    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER')")
     @PostMapping
     public ResponseEntity<?> createLoanTransaction(@RequestBody LoanRequest loanRequest) {
         LoanResponse loanResponse = loanTransactionService.create(loanRequest);
@@ -61,6 +63,7 @@ public class LoanTransactionController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
     @PutMapping("/{adminId}/approve")
     public ResponseEntity<?> approveLoanTransaction(@PathVariable String adminId, @RequestBody LoanApproveRequest loanApproveRequest) {
         LoanResponse loanResponse = loanTransactionService.approve(loanApproveRequest, adminId);
@@ -73,6 +76,7 @@ public class LoanTransactionController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
     @PutMapping("/{trxId}/pay")
     public ResponseEntity<?> payLoanTransaction(@PathVariable String trxId, @RequestBody LoanPayRequest loanPayRequest) {
         LoanResponse loanResponse = loanTransactionService.pay(trxId, loanPayRequest);

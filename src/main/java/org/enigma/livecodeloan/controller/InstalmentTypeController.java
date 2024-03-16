@@ -7,6 +7,7 @@ import org.enigma.livecodeloan.model.response.InstalmentTypeResponse;
 import org.enigma.livecodeloan.service.InstalmentTypeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import java.util.List;
 public class InstalmentTypeController {
     private final InstalmentTypeService instalmentTypeService;
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
     @PostMapping
     public ResponseEntity<?> createInstalmentType(@RequestBody InstalmentTypeRequest instalmentTypeRequest) {
         InstalmentTypeResponse instalmentTypeResponse = instalmentTypeService.create(instalmentTypeRequest);
@@ -60,6 +62,7 @@ public class InstalmentTypeController {
                         .build());
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_STAFF')")
     @PutMapping
     public ResponseEntity<?> updateInstalmentType(@RequestBody InstalmentTypeRequest instalmentTypeRequest) {
         InstalmentTypeResponse instalmentTypeResponse = instalmentTypeService.update(instalmentTypeRequest);
