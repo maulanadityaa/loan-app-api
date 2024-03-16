@@ -2,10 +2,12 @@ package org.enigma.livecodeloan.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.enigma.livecodeloan.model.entity.LoanType;
+import org.enigma.livecodeloan.model.exception.ApplicationException;
 import org.enigma.livecodeloan.model.request.LoanTypeRequest;
 import org.enigma.livecodeloan.model.response.LoanTypeResponse;
 import org.enigma.livecodeloan.repository.LoanTypeRepository;
 import org.enigma.livecodeloan.service.LoanTypeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,18 +28,14 @@ public class LoanTypeServiceImpl implements LoanTypeService {
 
     @Override
     public LoanTypeResponse update(LoanTypeRequest loanTypeRequest) {
-        LoanType loanType = loanTypeRepository.findById(loanTypeRequest.getId()).orElse(null);
+        LoanType loanType = loanTypeRepository.findById(loanTypeRequest.getId()).orElseThrow(() -> new ApplicationException("Loan type not found", String.format("Cannot find loan type with id=%s", loanTypeRequest.getId()), HttpStatus.NOT_FOUND));
 
-        if (loanType != null) {
-            loanType.setId(loanTypeRequest.getId());
-            loanType.setType(loanTypeRequest.getLoanType());
-            loanType.setMaxLoan(loanTypeRequest.getMaxLoan());
-            loanTypeRepository.save(loanType);
+        loanType.setId(loanTypeRequest.getId());
+        loanType.setType(loanTypeRequest.getLoanType());
+        loanType.setMaxLoan(loanTypeRequest.getMaxLoan());
+        loanTypeRepository.save(loanType);
 
-            return toLoanTypeResponse(loanType);
-        }
-
-        return null;
+        return toLoanTypeResponse(loanType);
     }
 
     @Override
@@ -54,22 +52,16 @@ public class LoanTypeServiceImpl implements LoanTypeService {
 
     @Override
     public LoanTypeResponse getLoanTypeById(String id) {
-        LoanType loanType = loanTypeRepository.findById(id).orElse(null);
+        LoanType loanType = loanTypeRepository.findById(id).orElseThrow(() -> new ApplicationException("Loan type not found", String.format("Cannot find loan type with id=%s", id), HttpStatus.NOT_FOUND));
 
-        if (loanType != null) {
-            return toLoanTypeResponse(loanType);
-        }
-
-        return null;
+        return toLoanTypeResponse(loanType);
     }
 
     @Override
     public void delete(String id) {
-        LoanType loanType = loanTypeRepository.findById(id).orElse(null);
+        LoanType loanType = loanTypeRepository.findById(id).orElseThrow(() -> new ApplicationException("Loan type not found", String.format("Cannot find loan type with id=%s", id), HttpStatus.NOT_FOUND));
 
-        if (loanType != null) {
-            loanTypeRepository.delete(loanType);
-        }
+        loanTypeRepository.delete(loanType);
     }
 
     private static LoanTypeResponse toLoanTypeResponse(LoanType loanType) {

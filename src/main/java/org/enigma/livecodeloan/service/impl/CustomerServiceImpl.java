@@ -3,11 +3,13 @@ package org.enigma.livecodeloan.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.enigma.livecodeloan.constant.EStatus;
 import org.enigma.livecodeloan.model.entity.Customer;
+import org.enigma.livecodeloan.model.exception.ApplicationException;
 import org.enigma.livecodeloan.model.request.CustomerRequest;
 import org.enigma.livecodeloan.model.response.CustomerResponse;
 import org.enigma.livecodeloan.repository.CustomerRepository;
 import org.enigma.livecodeloan.service.CustomerService;
 import org.enigma.livecodeloan.util.Helper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -32,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
             return toCustomerResponse(customer);
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            throw new ApplicationException("Cannot create customer", String.format("Cannot parse date=%s", customerRequest.getDateOfBirth()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -56,11 +58,11 @@ public class CustomerServiceImpl implements CustomerService {
                 customerRepository.save(customer);
                 return toCustomerResponse(customer);
             } else {
-                return null;
+                throw new ApplicationException("Cannot not found", String.format("Customer with id=%s", customerRequest.getId()), HttpStatus.NOT_FOUND);
             }
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            throw new ApplicationException("Cannot create customer", String.format("Cannot parse date=%s", customerRequest.getDateOfBirth()), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -72,11 +74,11 @@ public class CustomerServiceImpl implements CustomerService {
             if (customer != null) {
                 return toCustomerResponse(customer);
             } else {
-                return null;
+                throw new ApplicationException("Customer not found", String.format("Cannot find with id=%s", id), HttpStatus.NOT_FOUND);
             }
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            throw new ApplicationException("Cannot fetch customer", String.format("Cannot parse date=%s", id), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -104,6 +106,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer != null) {
             customer.setStatus(EStatus.INACTIVE);
             customerRepository.save(customer);
+        } else {
+            throw new ApplicationException("Cannot not found", String.format("Customer with id=%s", id), HttpStatus.NOT_FOUND);
         }
     }
 

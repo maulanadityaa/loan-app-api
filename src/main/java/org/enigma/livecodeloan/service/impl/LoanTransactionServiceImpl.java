@@ -10,6 +10,7 @@ import org.enigma.livecodeloan.model.entity.InstalmentType;
 import org.enigma.livecodeloan.model.entity.LoanTransaction;
 import org.enigma.livecodeloan.model.entity.LoanTransactionDetail;
 import org.enigma.livecodeloan.model.entity.LoanType;
+import org.enigma.livecodeloan.model.exception.ApplicationException;
 import org.enigma.livecodeloan.model.request.LoanApproveRequest;
 import org.enigma.livecodeloan.model.request.LoanPayRequest;
 import org.enigma.livecodeloan.model.request.LoanRequest;
@@ -27,6 +28,7 @@ import org.enigma.livecodeloan.service.LoanTransactionService;
 import org.enigma.livecodeloan.service.LoanTypeService;
 import org.enigma.livecodeloan.service.UserService;
 import org.enigma.livecodeloan.util.Helper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -103,48 +105,45 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
     @Transactional(rollbackOn = Exception.class)
     @Override
     public LoanResponse approve(LoanApproveRequest loanApproveRequest, String adminId) {
-        LoanTransaction loanTransaction = loanTransactionRepository.findById(loanApproveRequest.getLoanTransactionId()).orElse(null);
-        if (loanTransaction != null) {
-            UserResponse userResponse = userService.getUserByUserId(adminId);
+        LoanTransaction loanTransaction = loanTransactionRepository.findById(loanApproveRequest.getLoanTransactionId()).orElseThrow(() -> new ApplicationException("Loan Transaction not found", String.format("Cannot find loan transaction with id=%s", loanApproveRequest.getLoanTransactionId()), HttpStatus.NOT_FOUND));
 
-            loanTransaction.setApprovedAt(Instant.now().toEpochMilli());
-            loanTransaction.setApprovedBy(userResponse.getEmail());
-            loanTransaction.setApprovalStatus(EApprovalStatus.APPROVED);
-            loanTransaction.setNominal(((loanTransaction.getNominal() * loanApproveRequest.getInterestRates()) / 100) + loanTransaction.getNominal());
+        UserResponse userResponse = userService.getUserByUserId(adminId);
 
-            Integer counter = 0;
-            switch (loanTransaction.getInstalmentType().getInstalmentType()) {
-                case ONE_MONTH -> counter = 1;
-                case THREE_MONTHS -> counter = 3;
-                case SIXTH_MONTHS -> counter = 6;
-                case NINE_MONTHS -> counter = 9;
-                case TWELVE_MONTHS -> counter = 12;
-            }
+        loanTransaction.setApprovedAt(Instant.now().toEpochMilli());
+        loanTransaction.setApprovedBy(userResponse.getEmail());
+        loanTransaction.setApprovalStatus(EApprovalStatus.APPROVED);
+        loanTransaction.setNominal(((loanTransaction.getNominal() * loanApproveRequest.getInterestRates()) / 100) + loanTransaction.getNominal());
 
-            List<LoanTransactionDetail> loanTransactionDetails = new ArrayList<>();
-
-            for (int i = 0; i < counter; i++) {
-                loanTransactionDetails.add(LoanTransactionDetail.builder()
-                        .transactionDate(Instant.now().toEpochMilli())
-                        .nominal(loanTransaction.getNominal() / counter)
-                        .loanStatus(ELoanStatus.UNPAID)
-                        .createdAt(Instant.now().toEpochMilli())
-                        .updatedAt(Instant.now().toEpochMilli())
-                        .loanTransaction(loanTransaction)
-                        .build());
-
-                loanTransaction.setLoanTransactionDetails(loanTransactionDetails);
-            }
-            loanTransaction.setUpdatedAt(Instant.now().toEpochMilli());
-
-            loanTransactionRepository.save(loanTransaction);
-
-            List<LoanDetailResponse> loanDetailResponses = getLoanDetailResponses(loanTransaction);
-
-            return toLoanResponse(loanTransaction, loanDetailResponses);
+        Integer counter = 0;
+        switch (loanTransaction.getInstalmentType().getInstalmentType()) {
+            case ONE_MONTH -> counter = 1;
+            case THREE_MONTHS -> counter = 3;
+            case SIXTH_MONTHS -> counter = 6;
+            case NINE_MONTHS -> counter = 9;
+            case TWELVE_MONTHS -> counter = 12;
         }
 
-        return null;
+        List<LoanTransactionDetail> loanTransactionDetails = new ArrayList<>();
+
+        for (int i = 0; i < counter; i++) {
+            loanTransactionDetails.add(LoanTransactionDetail.builder()
+                    .transactionDate(Instant.now().toEpochMilli())
+                    .nominal(loanTransaction.getNominal() / counter)
+                    .loanStatus(ELoanStatus.UNPAID)
+                    .createdAt(Instant.now().toEpochMilli())
+                    .updatedAt(Instant.now().toEpochMilli())
+                    .loanTransaction(loanTransaction)
+                    .build());
+
+            loanTransaction.setLoanTransactionDetails(loanTransactionDetails);
+        }
+        loanTransaction.setUpdatedAt(Instant.now().toEpochMilli());
+
+        loanTransactionRepository.save(loanTransaction);
+
+        List<LoanDetailResponse> loanDetailResponses = getLoanDetailResponses(loanTransaction);
+
+        return toLoanResponse(loanTransaction, loanDetailResponses);
     }
 
 
@@ -175,7 +174,7 @@ public class LoanTransactionServiceImpl implements LoanTransactionService {
     @Transactional(rollbackOn = Exception.class)
     @Override
     public LoanResponse pay(String transactionId, LoanPayRequest loanPayRequest) {
-        LoanTransaction loanTransaction = loanTransactionRepository.findById(transactionId).orElse(null);
+        LoanTransaction loanTransaction = loanTransactionRepository.findById(transactionId).orElseThrow(() -> new ApplicationException("Loan Transaction not found", String.format("Cannot find loan transaction with id=%s", transactionId), HttpStatus.NOT_FOUND));
 
         if (loanTransaction != null) {
             LoanTransactionDetail loanTransactionDetail = loanTransactionDetailService.getById(loanPayRequest.getLoanTransactionDetailId());

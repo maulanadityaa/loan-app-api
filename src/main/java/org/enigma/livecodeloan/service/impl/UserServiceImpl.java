@@ -3,9 +3,11 @@ package org.enigma.livecodeloan.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.enigma.livecodeloan.model.entity.AppUser;
 import org.enigma.livecodeloan.model.entity.UserCredential;
+import org.enigma.livecodeloan.model.exception.ApplicationException;
 import org.enigma.livecodeloan.model.response.UserResponse;
 import org.enigma.livecodeloan.repository.UserCredentialRepository;
 import org.enigma.livecodeloan.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUserByUserId(String userId) {
-        UserCredential userCredential = userCredentialRepository.findById(userId).orElseThrow(null);
+        UserCredential userCredential = userCredentialRepository.findById(userId).orElseThrow(() -> new ApplicationException("User not found", String.format("Cannot find user with id=%s", userId), HttpStatus.NOT_FOUND));
 
         if (userCredential != null) {
             return UserResponse.builder()

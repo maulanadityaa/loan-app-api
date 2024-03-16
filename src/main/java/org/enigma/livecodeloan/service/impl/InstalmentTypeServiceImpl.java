@@ -2,10 +2,12 @@ package org.enigma.livecodeloan.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.enigma.livecodeloan.model.entity.InstalmentType;
+import org.enigma.livecodeloan.model.exception.ApplicationException;
 import org.enigma.livecodeloan.model.request.InstalmentTypeRequest;
 import org.enigma.livecodeloan.model.response.InstalmentTypeResponse;
 import org.enigma.livecodeloan.repository.InstalmentTypeRepository;
 import org.enigma.livecodeloan.service.InstalmentTypeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,38 +20,34 @@ public class InstalmentTypeServiceImpl implements InstalmentTypeService {
 
     @Override
     public InstalmentTypeResponse create(InstalmentTypeRequest instalmentTypeRequest) {
-        InstalmentType instalmentType = toInstalmentType(instalmentTypeRequest);
+        try {
+            InstalmentType instalmentType = toInstalmentType(instalmentTypeRequest);
+            instalmentTypeRepository.save(instalmentType);
+
+            return toInstalmentTypeResponse(instalmentType);
+        } catch (Exception e) {
+            throw new ApplicationException("Instalment type cant created", String.format("Cannot create instalment with type=%s", instalmentTypeRequest.getInstalmentType()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public InstalmentTypeResponse update(InstalmentTypeRequest instalmentTypeRequest) {
+        InstalmentType instalmentType = instalmentTypeRepository.findById(instalmentTypeRequest.getId()).orElseThrow(() -> new ApplicationException("Instalment type not found", String.format("Cannot find instalment type with id=%s", instalmentTypeRequest.getId()), HttpStatus.NOT_FOUND));
+
+        instalmentType = InstalmentType.builder()
+                .id(instalmentType.getId())
+                .instalmentType(instalmentTypeRequest.getInstalmentType())
+                .build();
         instalmentTypeRepository.save(instalmentType);
 
         return toInstalmentTypeResponse(instalmentType);
     }
 
     @Override
-    public InstalmentTypeResponse update(InstalmentTypeRequest instalmentTypeRequest) {
-        InstalmentType instalmentType = instalmentTypeRepository.findById(instalmentTypeRequest.getId()).orElse(null);
-
-        if (instalmentType != null) {
-            instalmentType = InstalmentType.builder()
-                    .id(instalmentType.getId())
-                    .instalmentType(instalmentTypeRequest.getInstalmentType())
-                    .build();
-            instalmentTypeRepository.save(instalmentType);
-
-            return toInstalmentTypeResponse(instalmentType);
-        }
-
-        return null;
-    }
-
-    @Override
     public InstalmentTypeResponse getById(String id) {
-        InstalmentType instalmentType = instalmentTypeRepository.findById(id).orElse(null);
+        InstalmentType instalmentType = instalmentTypeRepository.findById(id).orElseThrow(() -> new ApplicationException("Instalment type not found", String.format("Cannot find instalment type with id=%s", id), HttpStatus.NOT_FOUND));
 
-        if (instalmentType != null) {
-            return toInstalmentTypeResponse(instalmentType);
-        }
-
-        return null;
+        return toInstalmentTypeResponse(instalmentType);
     }
 
     @Override
@@ -66,11 +64,9 @@ public class InstalmentTypeServiceImpl implements InstalmentTypeService {
 
     @Override
     public void delete(String id) {
-        InstalmentType instalmentType = instalmentTypeRepository.findById(id).orElse(null);
+        InstalmentType instalmentType = instalmentTypeRepository.findById(id).orElseThrow(() -> new ApplicationException("Instalment type not found", String.format("Cannot find instalment type with id=%s", id), HttpStatus.NOT_FOUND));
 
-        if (instalmentType != null) {
-            instalmentTypeRepository.delete(instalmentType);
-        }
+        instalmentTypeRepository.delete(instalmentType);
     }
 
     private static InstalmentTypeResponse toInstalmentTypeResponse(InstalmentType instalmentType) {

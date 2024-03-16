@@ -81,7 +81,7 @@ public class LoanTransactionController {
                 .body(CommonResponse.<LoanResponse>builder()
                         .statusCode(HttpStatus.OK.value())
                         .message("Loan transaction paid successfully")
-                        .data(loanResponse)
+//                        .data(loanResponse)
                         .build());
     }
 }
