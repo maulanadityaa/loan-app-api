@@ -16,7 +16,7 @@ public class LoanResponse {
     private String loanTypeId;
     private String instalmentTypeId;
     private String customerId;
-    private Long nominal;
+    private Double nominal;
     private Long approvedAt;
     private String approvedBy;
     private String approvalStatus;

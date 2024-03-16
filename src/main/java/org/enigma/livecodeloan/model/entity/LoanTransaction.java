@@ -61,7 +61,7 @@ public class LoanTransaction {
     @Column(name = "approval_status")
     private EApprovalStatus approvalStatus; // enum
 
-    @OneToMany(mappedBy = "loanTransaction", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "loanTransaction", cascade = CascadeType.ALL)
     private List<LoanTransactionDetail> loanTransactionDetails;
 
     @Column(name = "created_at")

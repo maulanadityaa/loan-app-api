@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApproveLoanRequest {
+public class LoanApproveRequest {
     private String loanTransactionId;
-    private Integer interestRates;
+    private Double interestRates;
 }

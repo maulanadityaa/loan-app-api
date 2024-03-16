@@ -7,6 +7,7 @@ import org.enigma.livecodeloan.model.request.CustomerRequest;
 import org.enigma.livecodeloan.model.response.CustomerResponse;
 import org.enigma.livecodeloan.repository.CustomerRepository;
 import org.enigma.livecodeloan.service.CustomerService;
+import org.enigma.livecodeloan.util.Helper;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -45,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
                         .id(customer.getId())
                         .firstName(customerRequest.getFirstName())
                         .lastName(customerRequest.getLastName())
-                        .dob(stringToDate(customerRequest.getDateOfBirth()))
+                        .dob(Helper.stringToDate(customerRequest.getDateOfBirth()))
                         .mobilePhone(customerRequest.getPhone())
                         .marriageStatus(customerRequest.getMarriageStatus())
                         .status(EStatus.ACTIVE)
@@ -110,7 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
         return Customer.builder()
                 .firstName(customerRequest.getFirstName())
                 .lastName(customerRequest.getLastName())
-                .dob(stringToDate(customerRequest.getDateOfBirth()))
+                .dob(Helper.stringToDate(customerRequest.getDateOfBirth()))
                 .mobilePhone(customerRequest.getPhone())
                 .marriageStatus(customerRequest.getMarriageStatus())
                 .status(EStatus.ACTIVE)
@@ -118,22 +119,12 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
     }
 
-    private static Date stringToDate(String stringDate) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-        return formatter.parse(stringDate);
-    }
-
-    private static String dateToString(Date date) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-        return formatter.format(date);
-    }
-
     private static CustomerResponse toCustomerResponse(Customer customer) throws ParseException {
         return CustomerResponse.builder()
                 .id(customer.getId())
                 .firstName(customer.getFirstName())
                 .lastName(customer.getLastName())
-                .dateOfBirth(dateToString(customer.getDob()))
+                .dateOfBirth(Helper.dateToString(customer.getDob()))
                 .marriageStatus(customer.getMarriageStatus())
                 .phone(customer.getMobilePhone())
                 .build();
