@@ -10,5 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomerResponse {
-
+    private String id;
+    private String firstName;
+    private String lastName;
+    private String dateOfBirth;
+    private String phone;
+    private String marriageStatus;
 }

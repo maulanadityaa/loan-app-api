@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.enigma.livecodeloan.constant.DbPath;
 import org.enigma.livecodeloan.constant.EInstalmentType;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
 @Builder(toBuilder = true)
 @Entity
 @Data
-@Table(name = "t_instalment_type")
+@Table(name = DbPath.INSTALMENT_TYPE_SCHEMA)
 public class InstalmentType {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

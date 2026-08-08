@@ -1,10 +1,10 @@
 package org.enigma.livecodeloan.model.entity;
 
-import com.enigma.enigmatshop.constant.ERole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.enigma.livecodeloan.constant.ERole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,12 +21,14 @@ public class AppUser implements UserDetails {
     private String id;
     private String username;
     private String password;
-    private ERole role;
+    private List<ERole> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
-        simpleGrantedAuthorities.add(new SimpleGrantedAuthority(role.name()));
+        for (ERole role : roles) {
+            simpleGrantedAuthorities.add(new SimpleGrantedAuthority(role.name()));
+        }
         return simpleGrantedAuthorities;
     }
 

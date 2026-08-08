@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.enigma.livecodeloan.model.entity.Customer;
+import org.enigma.livecodeloan.model.entity.InstalmentType;
+import org.enigma.livecodeloan.model.entity.LoanType;
 
 import java.util.List;
 
@@ -12,8 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoanRequest {
-    private String loanTypeId;
-    private String instalmentTypeId;
-    private String customerId;
-    private Long nominal;
+    private LoanType loanType;
+    private InstalmentType instalmentType;
+    private Customer customer;
+    private Double nominal;
+    private List<LoanDetailRequest> transactionDetailRequests;
 }

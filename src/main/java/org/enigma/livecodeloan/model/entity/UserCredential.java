@@ -1,7 +1,9 @@
 package org.enigma.livecodeloan.model.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,8 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.enigma.livecodeloan.constant.DbPath;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 
 import java.util.List;
 
@@ -25,7 +27,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 @Entity
-@Table(name = "mst_user")
+@Table(name = DbPath.USER_SCHEMA)
 public class UserCredential {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -37,6 +39,6 @@ public class UserCredential {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<UserRole> role;
 }

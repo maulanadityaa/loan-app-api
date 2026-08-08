@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.enigma.livecodeloan.constant.ERole;
+
+import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
@@ -15,6 +18,7 @@ public class AuthRequest {
     private String firstName;
     private String lastName;
     private String dob;
-    private String address;
     private String mobilePhone;
+    private String marriageStatus;
+    private List<ERole> roles;
 }
